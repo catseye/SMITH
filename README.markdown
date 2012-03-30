@@ -19,14 +19,16 @@ reserved.
 >
 > — Hunter S. Thompson, *Fear and Loathing in Las Vegas*
 
-### What is SMITH?
+What is SMITH?
+--------------
 
-SMITH, the successor to [SMETANA](/projects/smetana/), is a programming
-language that goes one better than
-[Bullfrog](http://members.tripod.com/rkusnery/bullfrog.html). Not only
-are there no conditional jumps, there are no jumps **whatsoever**. The
-program counter can *only* be incremented and *only* instruction by
-instruction.
+SMITH, the successor to [SMETANA][], is a programming language that goes
+one better than [Bullfrog][]. Not only are there no conditional jumps,
+there are no jumps **whatsoever**. The program counter can *only* be
+incremented, and *only* instruction by instruction.
+
+[SMETANA]:  http://catseye.tc/projects/smetana/
+[Bullfrog]: http://esolangs.org/wiki/Bullfrog
 
 ### What the...???
 
@@ -58,7 +60,8 @@ allowed but not required here, and the indirection syntax is completely
 different (there's only indirect references to registers, not memory,
 anyway.)
 
-### Overview
+Overview
+--------
 
 Consider the SMITH machine to have an unlimited number of registers.
 These are called `R0` to `Rn` where no arbitrary limit is imposed on
@@ -84,7 +87,8 @@ are notated in decimal. `#` may precede immediate integers if the
 programmer desires. However, it may not precede offsets (they should be
 preceded by either `+` or `-`.)
 
-### Instructions
+Instructions
+------------
 
 The basic instructions (available in the original version) are:
 
@@ -131,7 +135,8 @@ SMITH v2 also added two directives:
       ; arbitrary text composing a source comment               ; Kilroy was here
       REP int OPCODE [destination[, source[, length]]]          REP 50 STOP
 
-### Explanation
+Explanation
+-----------
 
 `MOV` will assign a register a value without modifying it.
 
