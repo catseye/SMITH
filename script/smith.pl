@@ -2,9 +2,9 @@
 
 ### smith.pl ###
 
-# SMITH - Self Modifying Indecent Turing Hack, v2.1-2011.0922
+# SMITH - Self Modifying Indecent Turing Hack, v2.1-2012.0912
 
-# Copyright (c)2000-2011, Chris Pressey, Cat's Eye Technologies.
+# Copyright (c)2000-2012, Chris Pressey, Cat's Eye Technologies.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-### SMITH Interpreter v2007.0722 ###
+### SMITH Interpreter v2.1-2012.0912 ###
 
   ##############################################################
   # "'Look outside,' I said.                                   #
@@ -46,13 +46,30 @@
   #    -- Hunter S. Thompson, _Fear and Loathing in Las Vegas_ #
   ##############################################################
 
-# Usage:   [perl] smith[.pl] [-c] [-d] [-g] [-p] [-q] program.smt
+# Usage:   [perl] smith[.pl] [-c] [-d] [-g] [-p] [-q] [-x] [-y] program.smt
 # Options: -c       Continue (Don't Break program on Error)
 #          -d       Run in Debugging Mode
 #          -g       Use v2-compatible "goofy copy"
 #          -p       Pause (in conjunction with -d)
 #          -q       Quiet (Don't display messages)
+#          -x       Expand * even in strings (pre-2012 compat)
+#          -y       Use pre-2012-compatible "goofy string literals"
 
+# Changes in SMITH v2.1-2012.0912:
+# - Fixed a bug reported by Keymaker: creating a string literal
+#   where one of the characters of the string is written into
+#   the same register used in the indirect register reference, e.g.
+#     MOV R0, 0
+#     MOV R[R0], "hi"
+#   was... goofy; it would take the character written into R0 as the
+#   new reference, and typically jump ahead many registers.  This
+#   has been fixed, but the behaviour can be re-enabled with the
+#   -y option (although why you would need this behaviour is beyond me.)
+# - Fixed a bug not reported by Keymaker, but which would have
+#   affected his example if it had got that far: the * "macro"
+#   was being expanded to the source line number, even in string
+#   literals.  This has been turned off, but can be re-enabled
+#   with the -x option.
 # Changes in SMITH v2007.0722:
 # - Copying instructions over other instructions is now defined
 #   by the language.  Previous implementation of interpreter had
@@ -103,7 +120,13 @@ $cont = 0;
 $debug = 0;
 
 # flag to enable v2-compatible "goofy copy" behaviour
-$goofy = 0;
+$goofycopy = 0;
+
+# flag to enable expanding * in string constants (pre-2012 behaviour)
+$starstr = 0;
+
+# flag to enable pre-2012 compatible "goofy string literal" behaviour
+$goofystr = 0;
 
 # flag to pause during debugging
 # only works when input is from terminal! :-)
@@ -129,7 +152,9 @@ sub load_program
     $line = $' if $line =~ /^\s*/;
     $line = $` if $line =~ /\s*$/;
     $line =~ s/\s*;.*?$//;
-    $line =~ s/\*/$i/ge;
+    if ($starstr or $line !~ /\"(.*?)\"/) {
+      $line =~ s/\*/$i/ge;
+    }    
     if ($line =~ /^\S+/)
     {
       my $reps = 1; my $j;
@@ -203,9 +228,17 @@ sub run_program
     {
       my $i = $reg->[$1];
       my $s = $2;
-      while($i < ($reg->[$1] + length($s)))
-      {
-        $reg->[$i] = ord(substr($s, ($i-$reg->[$1]), 1)); $i++;
+      if ($goofystr) {
+        while ($i < ($reg->[$1] + length($s)))
+        {
+          $reg->[$i] = ord(substr($s, ($i-$reg->[$1]), 1)); $i++;
+        }
+      } else {
+        my $j = $i;
+        while ($i < $j + length($s))
+        {
+          $reg->[$i] = ord(substr($s, ($i-$j), 1)); $i++;
+        }
       }
     }
     elsif ($mem->[$pc] =~
@@ -293,7 +326,7 @@ sub run_program
       {
         for ($i = 0; $i < $reg->[$lrg]; $i++)
         {
-          $mem->[$dst+$i] = $goofy ? $mem->[$src+$i] : $instructions[$i];
+          $mem->[$dst+$i] = $goofycopy ? $mem->[$src+$i] : $instructions[$i];
           $ggg = $dst + $i;
           $hhh = $src + $i;
           print "  $ggg = $hhh = $mem->[$ggg]\n" if $debug;
@@ -314,7 +347,7 @@ sub run_program
       {
         for ($i = 0; $i < $reg->[$lrg]; $i++)
         {
-          $mem->[$dst+$i] = $goofy ? $mem->[$src+$i] : $instructions[$i];
+          $mem->[$dst+$i] = $goofycopy ? $mem->[$src+$i] : $instructions[$i];
           $ggg = $dst + $i;
           $hhh = $src + $i;
           print "  $ggg = $hhh = $mem->[$ggg]\n" if $debug;
@@ -367,9 +400,9 @@ while(defined($ARGV[0]) and $ARGV[0] =~ /^\-(\S+)/)
   {
     $debug = 1;
   }
-  elsif ($1 eq 'g' or $1 eq 'goofy')
+  elsif ($1 eq 'g' or $1 eq 'goofycopy')
   {
-    $goofy = 1;
+    $goofycopy = 1;
   }
   elsif ($1 eq 'p' or $1 eq 'pause')
   {
@@ -378,6 +411,14 @@ while(defined($ARGV[0]) and $ARGV[0] =~ /^\-(\S+)/)
   elsif ($1 eq 'q' or $1 eq 'quiet')
   {
     $quiet = 1;
+  }
+  elsif ($1 eq 'x' or $1 eq 'starstr')
+  {
+    $starstr = 1;
+  }
+  elsif ($1 eq 'y' or $1 eq 'goofystr')
+  {
+    $goofystr = 1;
   }
   else
   {
@@ -388,7 +429,7 @@ while(defined($ARGV[0]) and $ARGV[0] =~ /^\-(\S+)/)
 
 ### START ###
 
-print "SMITH Interpreter v2.1-2011.0922\n" if not $quiet;
+print "SMITH Interpreter v2.1-2012.0912\n" if not $quiet;
 
 die "No program filename given" if !defined($ARGV[0]) or $ARGV[0] eq '';
 die "Can't find/read file '$ARGV[0]'" if not -r $ARGV[0];
