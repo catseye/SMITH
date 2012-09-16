@@ -2,7 +2,7 @@
 
 ### smith.pl ###
 
-# SMITH - Self Modifying Indecent Turing Hack, v2.1-2012.0912
+# SMITH - Self Modifying Indecent Turing Hack, v2.1-2012.0916
 
 # Copyright (c)2000-2012, Chris Pressey, Cat's Eye Technologies.
 # All rights reserved.
@@ -34,7 +34,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-### SMITH Interpreter v2.1-2012.0912 ###
+### SMITH Interpreter v2.1-2012.0916 ###
 
   ##############################################################
   # "'Look outside,' I said.                                   #
@@ -55,7 +55,7 @@
 #          -x       Expand * even in strings (pre-2012 compat)
 #          -y       Use pre-2012-compatible "goofy string literals"
 
-# Changes in SMITH v2.1-2012.0912:
+# Changes in SMITH v2.1-2012.0916:
 # - Fixed a bug reported by Keymaker: creating a string literal
 #   where one of the characters of the string is written into
 #   the same register used in the indirect register reference, e.g.
@@ -429,7 +429,7 @@ while(defined($ARGV[0]) and $ARGV[0] =~ /^\-(\S+)/)
 
 ### START ###
 
-print "SMITH Interpreter v2.1-2012.0912\n" if not $quiet;
+print "SMITH Interpreter v2.1-2012.0916\n" if not $quiet;
 
 die "No program filename given" if !defined($ARGV[0]) or $ARGV[0] eq '';
 die "Can't find/read file '$ARGV[0]'" if not -r $ARGV[0];

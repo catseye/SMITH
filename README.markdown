@@ -3,8 +3,9 @@ SMITH
 
 **S**elf-**M**odifying **I**ndecent **T**uring **H**ack
 
-Version 2.1-2011.0922. ©2000-2011 Cat's Eye Technologies. All rights
-reserved.
+Version 2.1-2012.0916.  
+Copyright ©2000-2012 Chris Pressey, Cat's Eye Technologies.
+All rights reserved.
 
 * * * * *
 
@@ -132,7 +133,7 @@ The instructions in the following table were made available in SMITH v2
 
 SMITH v2 also added two directives:
 
-      ; arbitrary text composing a source comment               ; Kilroy was here
+      ; arbitrary text comprising a source comment              ; Kilroy was here
       REP int OPCODE [destination[, source[, length]]]          REP 50 STOP
 
 Explanation
@@ -190,7 +191,7 @@ destination offset (which is always immediate), modifying the program
 > > sequence-based version numbers. This version was also known as
 > > "version 2.1 revision 2007.0722" when we dropped that idea. The
 > > current version, which differs mainly in that its documentation
-> > contains this paragraph, is version **2.1-2011.0922**. Your
+> > contains this paragraph, is version **2.1-2012.0916**. Your
 > > knowledge is now complete. Go home.
 
 `BLA` is kind of a special version of `COR` that makes some programming
