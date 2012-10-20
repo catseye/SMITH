@@ -58,7 +58,7 @@ The source code for the reference interpreter and supporting tools (in the
 
 -----------------------------------------------------------------------------
 
-The files `edit/smith.vim` and `eg/beer.smt` were contributed by
+The files `contrib/edit/smith.vim` and `eg/beer.smt` were contributed by
 Rafal M. Sulejman and Nathan Thern respectively, for distribution in the
 SMITH distribution; they are freely distributable unmodified for
 non-commercial purposes, and are thus covered under the following license:
